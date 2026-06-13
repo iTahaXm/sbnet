@@ -1,0 +1,36 @@
+# ── Broker ───────────────────────────────────────────────────────────────────
+# A broker registers itself in the directory and helps clients find relays.
+# It does NOT forward traffic. It only does matchmaking + token issuance.
+# Multiple brokers can exist globally; each registers in the same directory.
+#
+# Run:  go run ./broker
+
+id: "broker-eu-001"
+ip: "5.6.7.8"
+port: 7100
+country: "NL"
+region: "eu-west"
+
+# Modes this broker supports. Clients filter by mode.
+modes:
+  - "normal"
+  - "bridge"
+  - "kind"
+
+dir_url: "https://dir.example.com:7000"
+dir_tls_ca: ""
+reg_secret: ""   # HMAC secret; fallback: SBNET_REG_SECRET env var
+
+key_file: "broker.key"
+
+# Optional TLS for the broker API itself.
+tls_cert: ""
+tls_key:  ""
+
+# ── Kind-mode rendezvous ──
+# ICE/STUN servers advertised to clients and volunteer proxies (GET /kind/info)
+# for WebRTC NAT traversal. Use [] for LAN/localhost-only testing.
+stun_servers:
+  - "stun:stun.l.google.com:19302"
+
+log_level: "info"

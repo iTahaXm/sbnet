@@ -1,0 +1,40 @@
+# ── Bridge Server ────────────────────────────────────────────────────────────
+# A bridge is a cross-network gateway that connects a local SbNet client to a
+# foreign SbNet network. The bridge knows the foreign directory; the client
+# only needs the sbnet:// URI below.
+#
+# The client configures it as:
+#   sbnet://bridge=<your-ip>:9000&token=<token>&obfs=tls&mode=secure
+#
+# Run:  go run ./bridge
+
+# URL of the foreign (destination) network's directory authority.
+foreign_dir_url: "https://foreign-dir.example.com:7000"
+foreign_dir_tls_ca: ""   # CA cert for verifying the foreign directory's TLS; empty = system pool
+
+# Optional upstream egress proxy (e.g. a commercial VPN or SOCKS5 relay).
+# Only SOCKS5 is supported. Leave empty to connect directly.
+upstream_proxy: ""    # e.g. "socks5://127.0.0.1:1080"
+
+# Local endpoint that clients connect to.
+listen_addr: ":9000"
+
+# Pre-shared token. Every client sbnet:// URI must include this.
+# Generate with:  openssl rand -hex 32
+token: "CHANGE_ME"
+
+# Transport obfuscation.
+# "tls"  — wrap client connections in TLS (looks like HTTPS); requires tls_cert/tls_key
+# "none" — plain TCP (only for testing)
+obfs: "tls"
+mode: "secure"
+
+# TLS cert/key for the client-facing listener (required when obfs=tls).
+# Generate self-signed: openssl req -x509 -newkey ed25519 -keyout bridge.key -out bridge.crt -days 365 -nodes
+tls_cert: "bridge.crt"
+tls_key:  "bridge.key"
+
+# Bridge identity key (X25519); generated on first run.
+key_file: "bridge-identity.key"
+
+log_level: "info"

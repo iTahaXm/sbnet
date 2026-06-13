@@ -1,0 +1,85 @@
+# ─────────────────────────────────────────────
+# directory.yaml — Directory Authority
+# ─────────────────────────────────────────────
+# listen_addr: ":7000"
+# tls_cert: "/etc/sbnet/dir.crt"          # omit for plain HTTP (dev only)
+# tls_key:  "/etc/sbnet/dir.key"
+# key_file: "/etc/sbnet/directory.key"    # persistent ed25519 signing key
+# reg_secret: "CHANGE_ME_32_CHARS_MIN"    # shared HMAC secret for relay/broker auth
+# log_level: "info"                       # error | warn | info | debug
+# register_rps: 5                         # max registrations per IP per second
+# consensus_rps: 20                       # max /consensus fetches per IP per second
+# consensus_max_age_secs: 300             # drop relay from consensus after 5 min silence
+
+---
+# ─────────────────────────────────────────────
+# relay.yaml — Relay Node
+# ─────────────────────────────────────────────
+# id: "relay-de-001"
+# ip: "1.2.3.4"
+# port: 9001
+# role: "entry"           # entry | middle | exit
+# country: "DE"           # ISO 3166-1 alpha-2
+# region: "eu-west"
+# oper_mode: "normal"     # normal | bridge | restricted
+# bandwidth: 1000         # self-reported kbps
+# version: "1.0.0"
+# dir_url: "https://dir.example.com:7000"
+# reg_secret: "CHANGE_ME_32_CHARS_MIN"
+# key_file: "/etc/sbnet/relay.key"        # persistent X25519 key
+# log_level: "info"
+# circuit_idle_secs: 300                  # destroy idle circuits after 5 min
+# internal_dns: "127.0.0.1:2080"         # exit relay only: internal DoH resolver
+
+---
+# ─────────────────────────────────────────────
+# broker.yaml — Broker / Matchmaker
+# ─────────────────────────────────────────────
+# id: "broker-eu-001"
+# ip: "5.6.7.8"
+# port: 7100
+# country: "NL"
+# region: "eu-west"
+# modes:
+#   - "normal"
+#   - "bridge"
+# dir_url: "https://dir.example.com:7000"
+# reg_secret: "CHANGE_ME_32_CHARS_MIN"
+# key_file: "/etc/sbnet/broker.key"
+# log_level: "info"
+
+---
+# ─────────────────────────────────────────────
+# bridge.yaml — Bridge Gateway
+# ─────────────────────────────────────────────
+# foreign_dir_url: "https://foreign-dir.example.com:7000"
+# upstream_proxy: "socks5://127.0.0.1:1080"   # optional egress proxy
+# listen_addr: ":9000"
+# token: "BRIDGE_TOKEN_SHARED_WITH_CLIENTS"
+# obfs: "tls"       # tls | none
+# mode: "secure"    # secure | normal
+# key_file: "/etc/sbnet/bridge.key"
+# log_level: "info"
+
+---
+# ─────────────────────────────────────────────
+# client.yaml — Client
+# ─────────────────────────────────────────────
+# dir_url: "https://dir.example.com:7000"
+#
+# # Bridge mode (overrides dir_url):
+# # bridge_uri: "sbnet://bridge=example.com:9000&token=xxx&obfs=tls&mode=secure"
+#
+# # Proxy listen addresses:
+# socks5_addr: "127.0.0.1:1080"
+# http_proxy_addr: "127.0.0.1:8080"
+#
+# # Circuit settings:
+# circuit_count: 3           # parallel circuits
+# circuit_rotate_secs: 600   # rebuild every 10 min
+# guard_file: ".sbnet_guard"  # persistent guard relay
+#
+# # TLS:
+# dir_tls_ca: "/etc/sbnet/dir-ca.crt"  # directory CA cert for verification
+#
+# log_level: "info"

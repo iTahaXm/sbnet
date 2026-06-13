@@ -1,0 +1,40 @@
+# ── Client ───────────────────────────────────────────────────────────────────
+# The client builds a 3-hop onion circuit through the SbNet relay network and
+# exposes a SOCKS5 proxy (port 1080) and an HTTP/CONNECT proxy (port 8080).
+#
+# Configure your browser:
+#   SOCKS5 proxy  →  127.0.0.1:1080   (recommended)
+#   HTTP proxy    →  127.0.0.1:8080
+#
+# Run:  go run ./client
+#       SBNET_DIR=https://dir.example.com:7000 go run ./client
+
+# ── Normal mode (direct relay discovery via directory) ──
+dir_url: "https://dir.example.com:7000"
+dir_tls_ca: ""    # CA cert for verifying directory TLS; empty = system pool
+
+# ── Bridge mode (overrides dir_url entirely) ──
+# Obtain this URI from the bridge operator.
+# bridge_uri: "sbnet://bridge=example.com:9000&token=xxx&obfs=tls&mode=secure"
+
+# ── Broker mode (relay selection via a broker) ──
+# Leave empty to use direct relay selection.
+# broker_id: "broker-eu-001"
+
+# ── Kind mode (Snowflake-style volunteer proxies) ──
+# Reach the relay network through ephemeral volunteer WebRTC proxies matched by
+# a broker rendezvous, instead of connecting to an entry relay directly. The
+# directory (dir_url) is still used to pick middle/exit relays. Overrides broker
+# mode; overridden by bridge mode. Also settable via SBNET_KIND env var.
+# kind_broker_url: "http://broker.example.com:7100"
+
+# ── Proxy listen addresses ──
+socks5_addr:     "127.0.0.1:1080"
+http_proxy_addr: "127.0.0.1:8080"
+
+# ── Circuit settings ──
+circuit_count: 3          # number of parallel circuits (for load distribution)
+circuit_rotate_secs: 600  # rebuild all circuits every 10 minutes
+guard_file: ".sbnet_guard" # file storing the pinned entry (guard) relay
+
+log_level: "info"

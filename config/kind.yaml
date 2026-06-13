@@ -1,0 +1,28 @@
+# ── Kind Proxy (Snowflake-style volunteer) ───────────────────────────────────
+# A "kind" proxy is an ephemeral volunteer relay. It long-polls a broker
+# rendezvous for clients, accepts each over a WebRTC datachannel, and pipes the
+# (already onion-encrypted) cell stream to an entry relay. It learns nothing
+# about the client's destination — it is a transparent byte pipe.
+#
+# Anyone can run one to donate bandwidth and help censored users reach SbNet.
+#
+# Run:  go run ./kind
+#       SBNET_BROKER=http://broker.example.com:7100 go run ./kind
+
+# Broker rendezvous URL (matchmaking + STUN advertisement).
+broker_url: "http://broker.example.com:7100"
+
+# Directory authority — used to pick a verified entry relay to pipe clients to.
+dir_url:    "https://dir.example.com:7000"
+dir_tls_ca: ""    # CA cert for verifying directory TLS; empty = system pool
+
+# ICE/STUN servers for WebRTC NAT traversal. The broker's advertised list
+# (GET /kind/info) takes precedence; this is the fallback. Use [] for
+# LAN/localhost-only testing.
+stun_servers:
+  - "stun:stun.l.google.com:19302"
+
+# Maximum number of concurrent client sessions this volunteer will serve.
+capacity: 4
+
+log_level: "info"

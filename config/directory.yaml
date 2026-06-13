@@ -1,0 +1,38 @@
+# ── Directory Authority ──────────────────────────────────────────────────────
+# The directory is the trust anchor for the network. It signs the relay/broker
+# consensus and validates registrations via HMAC-SHA256.
+#
+# Run:  SBNET_REG_SECRET=<secret> go run ./directory
+
+listen_addr: ":7000"
+
+# TLS — strongly recommended in production.
+# Generate with: openssl req -x509 -newkey ed25519 -keyout dir.key -out dir.crt -days 365 -nodes
+tls_cert: ""   # path/to/dir.crt
+tls_key:  ""   # path/to/dir.key
+
+# Persistent ed25519 signing key. Generated on first run; back this up.
+key_file: "directory.key"
+
+# Shared HMAC secret. Every relay and broker must know this value.
+# Override at runtime with SBNET_REG_SECRET env var.
+reg_secret: ""   # REQUIRED — set this or set SBNET_REG_SECRET
+
+log_level: "info"   # error | warn | info | debug
+
+# Rate limiting (per source IP)
+register_rps: 5     # POST /register
+consensus_rps: 20   # GET  /consensus
+
+# A relay is dropped from the consensus after this many seconds of silence.
+consensus_max_age_secs: 300
+
+# ── Multi-directory sync ──
+# Other directories to gossip validated registrations to. Each directory still
+# signs its own consensus with its own key; a client trusts whichever directory
+# it queries. Registrations received on /register are forwarded one hop to these
+# peers (authenticated with reg_secret); /sync receipts are not re-forwarded.
+peer_dirs: []
+  # - "https://dir2.example.com:7000"
+  # - "https://dir3.example.com:7000"
+sync_tls_ca: ""   # CA cert for verifying peer directory TLS; empty = system pool

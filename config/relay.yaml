@@ -1,0 +1,32 @@
+# ── Relay Node ───────────────────────────────────────────────────────────────
+# Each machine in the network runs one relay with one role.
+# Roles:  entry   — first hop; knows client IP, not destination
+#         middle  — middle hop; knows neither client IP nor destination
+#         exit    — last hop; connects to .sbnet origins; never knows client IP
+#
+# Run:  go run ./relay  (reads relay.yaml in working directory)
+#       SBNET_CONFIG=/etc/sbnet/relay.yaml go run ./relay
+
+id: "relay-de-001"        # unique ID; used in logs and directory
+ip: "1.2.3.4"             # public IP that other nodes can reach
+port: 9001                # TCP cell protocol port
+health_port: 10001        # HTTP health/ping endpoint (default: port + 1000)
+
+role: "entry"             # entry | middle | exit
+country: "DE"             # ISO 3166-1 alpha-2
+region: "eu-west"         # freeform label
+oper_mode: "normal"       # normal | bridge | restricted
+bandwidth: 1000           # self-reported kbps (used by broker for scoring)
+version: "1.0.0"
+
+dir_url: "https://dir.example.com:7000"
+dir_tls_ca: ""            # CA cert for TLS to directory; empty = system pool
+reg_secret: ""            # HMAC secret; fallback: SBNET_REG_SECRET env var
+
+key_file: "relay.key"     # persistent X25519 identity key; generated on first run
+
+# Exit relay only: internal DNS-over-HTTP resolver for .sbnet hostnames.
+internal_dns: "127.0.0.1:2080"
+
+log_level: "info"
+circuit_idle_secs: 300    # destroy circuits idle longer than this
